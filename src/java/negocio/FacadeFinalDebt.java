@@ -8,14 +8,22 @@ package negocio;
 import DTO.FinalDebtResponse;
 import DTO.GetGroupUsersRequest;
 import DTO.GetGroupUsersResponse;
+import DTO.MailMessage;
 import entities.Usuario;
 import entities.Usuariosxgrupo;
 import entities.UsuariosxgrupoFacadeLocal;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.jms.JMSConnectionFactory;
+import javax.jms.JMSContext;
+import javax.jms.Message;
+import javax.jms.Queue;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -26,6 +34,13 @@ import javax.persistence.PersistenceUnit;
  */
 @Stateless
 public class FacadeFinalDebt implements FacadeFinalDebtRemote {
+
+    @Resource(mappedName = "jms/queueCorreos")
+    private Queue queueCorreos;
+
+    @Inject
+    @JMSConnectionFactory("java:comp/DefaultJMSConnectionFactory")
+    private JMSContext context;
 
     @EJB
     private UsuariosxgrupoFacadeLocal usuariosxgrupoFacade;
@@ -48,12 +63,23 @@ public class FacadeFinalDebt implements FacadeFinalDebtRemote {
         List<Usuario> usuariosDebt = new ArrayList<>();
         int totalDebt = 0;
         for (Usuariosxgrupo uxg : usuariosxgrupo) {
+            sendJMSMessageToQueueCorreos(new MailMessage(uxg.getUsuario(), uxg.getGrupo()));
             if (uxg.getGrupo().getId().intValue() == request.groupId) {
                 usuariosDebt.add(uxg.getUsuario());
-                
+                sendJMSMessageToQueueCorreos(new MailMessage(uxg.getUsuario(), uxg.getGrupo()));
                 totalDebt += uxg.getDeuda().intValue();
+                
             }
         }
+        
+        response.totalDebt = totalDebt;
+        
+        for (Usuariosxgrupo uxg : usuariosxgrupo) {
+            if (uxg.getGrupo().getId().intValue() == request.groupId) {
+                uxg.setDeuda(BigInteger.valueOf(totalDebt/usuariosDebt.size()));
+            }
+        }
+        //TODO: agregar gurpo a la tabla PendienteCierre
         
         return response;
     }
@@ -70,6 +96,12 @@ public class FacadeFinalDebt implements FacadeFinalDebtRemote {
         }
         
         return response;
+    }
+
+    private void sendJMSMessageToQueueCorreos(MailMessage messageData) {
+        
+        //context.createProducer().send(queueCorreos, messageData);
+        context.createProducer().send(queueCorreos, context.createObjectMessage(messageData));
     }
     
 }
