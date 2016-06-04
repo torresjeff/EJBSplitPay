@@ -6,6 +6,8 @@
 package negocio;
 
 import DTO.FinalDebtResponse;
+import DTO.GetGroupUsersRequest;
+import DTO.GetGroupUsersResponse;
 import entities.Usuariosxgrupo;
 import entities.UsuariosxgrupoFacadeLocal;
 import java.io.Serializable;
@@ -40,6 +42,20 @@ public class FacadeFinalDebt implements FacadeFinalDebtRemote {
     @Override
     public FinalDebtResponse FinalDebtResolution(DTO.FinalDebtRequest request) {
         FinalDebtResponse response =  new FinalDebtResponse();
+        List<Usuariosxgrupo> usuariosxgrupo = usuariosxgrupoFacade.findAll();
+        for (Usuariosxgrupo uxg : usuariosxgrupo) {
+            if (uxg.getGrupo().getId().intValue() == request.groupId) {
+                response.usuarios.add(uxg.getUsuario());
+                
+            }
+        }
+        
+        return response;
+    }
+
+    @Override
+    public GetGroupUsersResponse GetGroupUsers(GetGroupUsersRequest request) {
+        GetGroupUsersResponse response =  new GetGroupUsersResponse();
         List<Usuariosxgrupo> usuariosxgrupo = usuariosxgrupoFacade.findAll();
         for (Usuariosxgrupo uxg : usuariosxgrupo) {
             if (uxg.getGrupo().getId().intValue() == request.groupId) {
