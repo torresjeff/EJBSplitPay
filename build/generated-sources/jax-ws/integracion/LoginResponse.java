@@ -1,6 +1,7 @@
 
 package integracion;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
     "loginResult"
 })
 @XmlRootElement(name = "LoginResponse")
-public class LoginResponse {
+public class LoginResponse implements Serializable {
 
     @XmlElement(name = "LoginResult")
     protected LoginPayPalResponse loginResult;

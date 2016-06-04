@@ -1,6 +1,7 @@
 
 package integracion;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
     "tp"
 })
 @XmlRootElement(name = "Pagar")
-public class Pagar {
+public class Pagar implements Serializable{
 
     protected PagarRequest tp;
 

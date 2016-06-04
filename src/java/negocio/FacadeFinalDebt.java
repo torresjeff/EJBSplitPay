@@ -8,9 +8,11 @@ package negocio;
 import DTO.FinalDebtResponse;
 import DTO.GetGroupUsersRequest;
 import DTO.GetGroupUsersResponse;
+import entities.Usuario;
 import entities.Usuariosxgrupo;
 import entities.UsuariosxgrupoFacadeLocal;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -43,10 +45,13 @@ public class FacadeFinalDebt implements FacadeFinalDebtRemote {
     public FinalDebtResponse FinalDebtResolution(DTO.FinalDebtRequest request) {
         FinalDebtResponse response =  new FinalDebtResponse();
         List<Usuariosxgrupo> usuariosxgrupo = usuariosxgrupoFacade.findAll();
+        List<Usuario> usuariosDebt = new ArrayList<>();
+        int totalDebt = 0;
         for (Usuariosxgrupo uxg : usuariosxgrupo) {
             if (uxg.getGrupo().getId().intValue() == request.groupId) {
-                response.usuarios.add(uxg.getUsuario());
+                usuariosDebt.add(uxg.getUsuario());
                 
+                totalDebt += uxg.getDeuda().intValue();
             }
         }
         
