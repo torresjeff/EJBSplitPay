@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
     "user",
     "password"
 })
-public class LoginRequest implements Serializable {
+public class LoginRequest implements Serializable{
 
     protected String user;
     protected String password;
