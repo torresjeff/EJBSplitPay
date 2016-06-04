@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jax-ws xmlns="http://www.netbeans.org/ns/jax-ws/1">
-  <services/>
+  <services>
+    <service name="SupervigilanciaWebService">
+      <implementation-class>servicios.SupervigilanciaWebService</implementation-class>
+    </service>
+    <service name="WSSplitPay">
+      <implementation-class>servicios.WSSplitPay</implementation-class>
+    </service>
+  </services>
   <clients>
     <client name="WSPayPal">
       <wsdl-url>http://localhost:63033/WSPayPal.asmx?WSDL</wsdl-url>

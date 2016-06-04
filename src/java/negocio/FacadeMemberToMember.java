@@ -11,6 +11,8 @@ import entities.Usuariosxgrupo;
 import entities.UsuariosxgrupoFacadeLocal;
 import integracion.LoginPayPalResponse;
 import integracion.LoginRequest;
+import integracion.PagarPayPalResponse;
+import integracion.PagarRequest;
 import integracion.WSPayPal;
 import java.util.List;
 import javax.ejb.EJB;
@@ -34,7 +36,11 @@ public class FacadeMemberToMember implements FacadeMemberToMemberRemote {
     public String Hello() {
         return "Hello from Member to Member";
     }
+    
+    
 
+    
+    
     // Add business logic below. (Right-click in editor and choose
     // "Insert Code > Add Business Method")
 
@@ -65,6 +71,18 @@ public class FacadeMemberToMember implements FacadeMemberToMemberRemote {
         }
         
         return response;
+    }
+
+    @Override
+    public PagarPayPalResponse Pagar(PagarRequest request) {
+        return pagar(request);
+    }
+
+    private PagarPayPalResponse pagar(integracion.PagarRequest tp) {
+        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+        // If the calling of port operations may lead to race condition some synchronization is required.
+        integracion.WSPayPalSoap port = service.getWSPayPalSoap();
+        return port.pagar(tp);
     }
     
 }
